@@ -1,0 +1,13 @@
+SubjectID,MedName,Indication,Route,Dose,DoseUnit,Frequency,StartDate,EndDate,Ongoing
+SUBJ-001,Acetaminophen,Headache,Oral,500,mg,As Needed,2025-10-15,2025-10-17,No
+SUBJ-001,Lisinopril,Hypertension,Oral,10,mg,Once Daily,2020-03-01,,Yes
+SUBJ-002,Metformin,Type 2 Diabetes,Oral,1000,mg,Twice Daily,2019-06-15,,Yes
+SUBJ-002,Ondansetron,Nausea,IV,4,mg,As Needed,18/10/2025,19/10/2025,No
+SUBJ-003,Atorvastatin,Hyperlipidemia,Oral,20,mg,Once Daily,2021-01-10,,Yes
+SUBJ-003,Ibuprofen,Back Pain,ORAL,400,mg,Three Times Daily,01-Nov-2025,10-Nov-2025,No
+SUBJ-004,Omeprazole,GERD,Oral,20,mg,Once Daily,2022-08-20,,Yes
+SUBJ-004,Albuterol,Asthma,Inhalation,90,mcg,As Needed,2023-05-12,,Yes
+SUBJ-005,Warfarin,DVT Prophylaxis,Oral,5,mg,Once Daily,2024-02-01,,Yes
+SUBJ-005,Amoxicillin,Upper Respiratory Infection,Oral,500,mg,three times daily,15/11/2025,22/11/2025,No
+SUBJ-006,Sertraline,Depression,Oral,50,mg,Once Daily,2023-09-01,,Yes
+SUBJ-099,Aspirin,Pain,Oral,325,mg,As Needed,2025-11-05,2025-11-06,No
