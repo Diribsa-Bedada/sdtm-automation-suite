@@ -1,5 +1,3 @@
-# 🌿 SDTM.oak — Agentic Clinical Data Compiler
-
 <div align="center">
 
 **An autonomous multi-agent system that transforms raw clinical trial data into FDA/PMDA submission-ready SDTM datasets.**
@@ -13,7 +11,6 @@ Built with R • Google Gemini • MCP Protocol • Antigravity
 ---
 
 ## 📋 Problem Statement
-
 In the lifecycle of a clinical trial, raw Electronic Data Capture (EDC) records must be transformed into the **CDISC Study Data Tabulation Model (SDTM)** format before regulatory submission to the FDA or PMDA. This process — known as SDTM mapping — is one of the most labor-intensive bottlenecks in pharmaceutical biostatistics.
 
 **The pain points:**
@@ -28,7 +25,6 @@ In the lifecycle of a clinical trial, raw Electronic Data Capture (EDC) records 
 ---
 
 ## 🏗 Architecture
-
 SDTM.oak has three execution interfaces, all sharing the same mapping specification format:
 
 ```
@@ -60,8 +56,6 @@ SDTM.oak has three execution interfaces, all sharing the same mapping specificat
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-### Multi-Agent Pipeline (R)
-
 ```
 Raw CSVs ──► Metadata Inspector ──► Standard Aligner (Gemini API)
                                           │
@@ -86,18 +80,15 @@ Raw CSVs ──► Metadata Inspector ──► Standard Aligner (Gemini API)
 
 ---
 
-## 🚀 Quick Start
-
 ### Prerequisites
 - **R** (≥ 4.0) with packages: `httr`, `jsonlite`, `dplyr`, `readr`, `haven`, `tidyr`
 - **Python** (≥ 3.10) for the MCP server
 - **Google Gemini API key** — get one at [AI Studio](https://aistudio.google.com/app/apikey)
 
 ### Setup
-
 ```bash
 # 1. Clone the repository
-git clone https://github.com/YOUR_USERNAME/sdtm-automation-suite.git
+git clone https://github.com/fikreab-s/sdtm-automation-suite.git
 cd sdtm-automation-suite
 
 # 2. Configure your API key
@@ -109,7 +100,6 @@ export GEMINI_API_KEY='your_key_here'
 ```
 
 ### Run the Web Workspace (Visual UI)
-
 ```bash
 cd public
 python3 -m http.server 8080
@@ -119,7 +109,6 @@ python3 -m http.server 8080
 Click **"Load Mock Study Data"** on the dashboard to instantly populate the workspace with sample clinical trial data, then navigate through the tabs to configure mappings, run the compiler, and inspect results.
 
 ### Run the R Agent Pipeline (Headless)
-
 ```bash
 Rscript sdtm_agent.R --run-test
 ```
@@ -133,7 +122,6 @@ This will:
 6. Export `.xpt` and `.csv` files to `output/`
 
 ### Run the MCP Server
-
 ```bash
 pip install mcp[cli] google-generativeai
 python mcp_server.py
@@ -142,7 +130,6 @@ python mcp_server.py
 ---
 
 ## 📁 Project Structure
-
 ```
 sdtm-automation-suite/
 ├── public/                          # Visual web workspace
@@ -171,7 +158,6 @@ sdtm-automation-suite/
 ---
 
 ## 🎓 Course Concepts Applied
-
 | # | Concept | Where | Description |
 |---|---|---|---|
 | 1 | **Multi-Agent System** | `sdtm_agent.R` | 5 collaborative agents with autonomous self-correction loop |
@@ -184,7 +170,6 @@ sdtm-automation-suite/
 ---
 
 ## 🔒 Security Considerations
-
 - **API Keys**: Never hardcoded. Read exclusively from environment variables via `Sys.getenv()` (R) and `os.environ` (Python)
 - **Input Sanitization**: File paths are validated against directory traversal attacks in the MCP server
 - **File Type Restrictions**: Only `.csv`, `.xlsx`, `.xls`, and `.json` files are accepted
@@ -197,7 +182,6 @@ sdtm-automation-suite/
 ---
 
 ## 🧪 Testing
-
 ```bash
 # Run the R test suite
 Rscript test_sdtm.R
@@ -212,9 +196,8 @@ python mcp_server.py --help
 ---
 
 ## 📊 Key Technical Innovations
-
-1. **Pure R Agent Framework**: While most agentic workflows are Python-based, this solution is written in R — the primary language of clinical biostatistics
-2. **JSON Mode for Structured Output**: Uses Gemini's `responseMimeType: application/json` to force structured mapping specs without fragile regex parsing
+1. **Pure R Agent Framework**: While most agentic workflows are Python-based, our solution is written in R — the primary language of clinical biostatistics
+2. **JSON Mode for Structured Output**: We use Gemini's `responseMimeType: application/json` to force structured mapping specs without fragile regex parsing
 3. **Autonomous Pivot Transpositions**: Automatically handles wide-to-long data transformations (e.g., vital signs SysBP/DiaBP/Pulse columns → CDISC VS rows)
 4. **SAS XPT Binary Exports**: Generates regulatory-compliant SAS V5 Transport files directly from R via `haven::write_xpt`
 5. **Self-Correction Loop**: The Fixer Agent distinguishes between mapping bugs (fixable) and data integrity issues (requires clinical audit), preventing infinite retry loops
@@ -222,13 +205,11 @@ python mcp_server.py --help
 ---
 
 ## 🎥 Video Demo
-
 [Watch the 5-minute demo on YouTube →](#)
 
 ---
 
 ## 📝 License
-
 This project was created for the [Kaggle AI Agents: Intensive Vibe Coding Capstone Project](https://www.kaggle.com/competitions/vibecoding-agents-capstone-project).
 
 ---
