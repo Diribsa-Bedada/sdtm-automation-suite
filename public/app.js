@@ -1260,6 +1260,29 @@ function runValidationProcess() {
             }
         });
         
+        // Check 6: Case-insensitivity inconsistency checks for terminology fields (e.g. CMROUTE, CMFRQ, etc.)
+        const charFields = metadata.filter(f => f.type === 'Char').map(f => f.var);
+        charFields.forEach(col => {
+            const values = rows.map(r => r[col]).filter(Boolean);
+            const valMap = {}; // lowercase -> original value
+            const flagged = new Set();
+            values.forEach(v => {
+                const lower = v.toLowerCase().trim();
+                if (valMap[lower] && valMap[lower] !== v && !flagged.has(lower)) {
+                    state.validationReport.push({
+                        severity: 'Warning',
+                        domain: domain,
+                        variable: col,
+                        code: 'SDTM-006',
+                        message: `Inconsistent capitalization detected in variable '${col}': both '${valMap[lower]}' and '${v}' exist in output.`
+                    });
+                    flagged.add(lower);
+                } else {
+                    valMap[lower] = v;
+                }
+            });
+        });
+        
         // Domain level checks
         if (domain === 'DM') {
             // Check if USUBJID is unique in DM

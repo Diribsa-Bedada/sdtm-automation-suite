@@ -439,6 +439,34 @@ for (domain in names(sdtm_datasets)) {
           Message = paste("Row", r, ": Subject", subid, "not found in Demographics (DM)."),
           stringsAsFactors = FALSE
         ))
+    }
+  }
+  
+  # Check 6: Case-insensitivity inconsistency checks for terminology fields
+  char_cols <- names(df)[sapply(df, is.character)]
+  for (col in char_cols) {
+    vals <- df[[col]]
+    vals <- vals[!is.na(vals) & vals != ""]
+    if (length(vals) > 0) {
+      lower_vals <- tolower(trimws(vals))
+      val_map <- list()
+      flagged <- c()
+      for (k in 1:length(vals)) {
+        v <- vals[k]
+        lv <- lower_vals[k]
+        if (!is.null(val_map[[lv]]) && val_map[[lv]] != v && !(lv %in% flagged)) {
+          validation_report <- rbind(validation_report, data.frame(
+            Severity = "Warning",
+            Domain = domain,
+            Variable = col,
+            Code = "SDTM-006",
+            Message = paste("Inconsistent capitalization detected in variable '", col, "': both '", val_map[[lv]], "' and '", v, "' exist in output.", sep=""),
+            stringsAsFactors = FALSE
+          ))
+          flagged <- c(flagged, lv)
+        } else {
+          val_map[[lv]] <- v
+        }
       }
     }
   }
