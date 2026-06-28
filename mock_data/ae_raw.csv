@@ -1,0 +1,7 @@
+SubjNum,Event,Severity,Serious,StartDate,EndDate,Action,Relationship
+SUBJ-001,Headache,Mild,No,2025-10-15,2025-10-17,None,Not Related
+SUBJ-001,Nausea,Moderate,No,2025-10-16,2025-10-16,None,Possible
+SUBJ-002,Dyspnea,Severe,Yes,18/10/2025,20/10/2025,Dose Reduced,Related
+SUBJ-003,Fatigue,Mild,No,2025-11-03,2025-11-10,None,Possible
+SUBJ-004,Dizziness,Mild,No,2025-11-06,2025-11-06,None,Not Related
+SUBJ-099,Skin Rash,Moderate,No,2025-11-20,2025-11-25,None,Related

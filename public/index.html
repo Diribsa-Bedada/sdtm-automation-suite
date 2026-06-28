@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<!-- ============================================================
+     SDTM.oak Clinical Data Studio — Visual Web Workspace
+     ============================================================
+     Part of the SDTM Automation Suite capstone project.
+     This file provides the single-page application shell with 6 tabs:
+       Dashboard | Data Manager | Spec Builder | Runner | Validator | Export
+
+     Course Concept: Vibe Coding (intent-driven dual-interface development)
+     ============================================================ -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SDTM.oak — Agentic Clinical Data Compiler</title>
+    <meta name="description" content="An autonomous multi-agent system that transforms raw clinical trial data into FDA/PMDA submission-ready CDISC SDTM datasets using Google Gemini AI.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- CSS Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark-mode">
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <div class="logo-icon"></div>
+                    <span class="logo-text">SDTM<span class="highlight">.oak</span></span>
+                </div>
+                <div class="logo-subtext">Clinical Data Studio</div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <button class="nav-item active" data-tab="dashboard">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </button>
+                <button class="nav-item" data-tab="data-manager">
+                    <i data-lucide="file-spreadsheet"></i>
+                    <span>Data Manager</span>
+                    <span class="badge" id="raw-file-count">0</span>
+                </button>
+                <button class="nav-item" data-tab="spec-builder">
+                    <i data-lucide="git-branch"></i>
+                    <span>Spec Builder</span>
+                </button>
+                <button class="nav-item" data-tab="runner">
+                    <i data-lucide="play-circle"></i>
+                    <span>Mapping Runner</span>
+                </button>
+                <button class="nav-item" data-tab="validator">
+                    <i data-lucide="shield-alert"></i>
+                    <span>Validator</span>
+                    <span class="badge badge-error" id="val-error-count" style="display: none;">0</span>
+                </button>
+                <button class="nav-item" data-tab="exporter">
+                    <i data-lucide="download"></i>
+                    <span>Export Center</span>
+                </button>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="version">v1.2.0-beta</div>
+                <div class="system-status">
+                    <span class="status-indicator online"></span>
+                    <span>Local Workspace</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            
+            <!-- Tab: Dashboard -->
+            <section id="dashboard" class="tab-content active">
+                <div class="header-section">
+                    <h1>Clinical Dashboard</h1>
+                    <p class="subtitle">Overview of the active clinical trial mapping & validation pipeline.</p>
+                </div>
+                
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-icon bg-blue"><i data-lucide="database"></i></div>
+                        <div class="metric-info">
+                            <span class="metric-label">Raw Datasets</span>
+                            <span class="metric-value" id="dash-raw-count">0</span>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon bg-green"><i data-lucide="check-square"></i></div>
+                        <div class="metric-info">
+                            <span class="metric-label">Mapped Domains</span>
+                            <span class="metric-value" id="dash-mapped-count">0 / 5</span>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon bg-purple"><i data-lucide="users"></i></div>
+                        <div class="metric-info">
+                            <span class="metric-label">Active Subjects (USUBJID)</span>
+                            <span class="metric-value" id="dash-subject-count">0</span>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon bg-red"><i data-lucide="alert-triangle"></i></div>
+                        <div class="metric-info">
+                            <span class="metric-label">Validation Health</span>
+                            <span class="metric-value" id="dash-health">100%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-row">
+                    <div class="card flex-2">
+                        <div class="card-header">
+                            <h3>Pipeline Progress</h3>
+                            <span class="badge badge-info">CDISC SDTM IG 3.2</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="domain-progress-list">
+                                <div class="domain-progress-item">
+                                    <div class="domain-info">
+                                        <span class="domain-code">DM</span>
+                                        <span class="domain-name">Demographics</span>
+                                        <span class="domain-percent" id="prog-pct-DM">0%</span>
+                                    </div>
+                                    <div class="progress-bar-container">
+                                        <div class="progress-bar" id="prog-bar-DM" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                                <div class="domain-progress-item">
+                                    <div class="domain-info">
+                                        <span class="domain-code">AE</span>
+                                        <span class="domain-name">Adverse Events</span>
+                                        <span class="domain-percent" id="prog-pct-AE">0%</span>
+                                    </div>
+                                    <div class="progress-bar-container">
+                                        <div class="progress-bar" id="prog-bar-AE" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                                <div class="domain-progress-item">
+                                    <div class="domain-info">
+                                        <span class="domain-code">VS</span>
+                                        <span class="domain-name">Vital Signs</span>
+                                        <span class="domain-percent" id="prog-pct-VS">0%</span>
+                                    </div>
+                                    <div class="progress-bar-container">
+                                        <div class="progress-bar" id="prog-bar-VS" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                                <div class="domain-progress-item">
+                                    <div class="domain-info">
+                                        <span class="domain-code">LB</span>
+                                        <span class="domain-name">Laboratory Findings</span>
+                                        <span class="domain-percent" id="prog-pct-LB">0%</span>
+                                    </div>
+                                    <div class="progress-bar-container">
+                                        <div class="progress-bar" id="prog-bar-LB" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                                <div class="domain-progress-item">
+                                    <div class="domain-info">
+                                        <span class="domain-code">MH</span>
+                                        <span class="domain-name">Medical History</span>
+                                        <span class="domain-percent" id="prog-pct-MH">0%</span>
+                                    </div>
+                                    <div class="progress-bar-container">
+                                        <div class="progress-bar" id="prog-bar-MH" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card flex-1">
+                        <div class="card-header">
+                            <h3>Quick Actions</h3>
+                        </div>
+                        <div class="card-body quick-actions-list">
+                            <button class="btn btn-primary btn-block" onclick="navigateToTab('data-manager')">
+                                <i data-lucide="plus-circle"></i> Upload Raw Data
+                            </button>
+                            <button class="btn btn-secondary btn-block" onclick="navigateToTab('spec-builder')">
+                                <i data-lucide="git-merge"></i> Configure Mappings
+                            </button>
+                            <button class="btn btn-accent btn-block" id="load-mock-btn">
+                                <i data-lucide="sparkles"></i> Load Mock Study Data
+                            </button>
+                            <div class="divider"></div>
+                            <button class="btn btn-danger btn-block" id="reset-workspace-btn">
+                                <i data-lucide="trash-2"></i> Reset Workspace
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab: Data Manager -->
+            <section id="data-manager" class="tab-content">
+                <div class="header-section">
+                    <h1>Raw Data Manager</h1>
+                    <p class="subtitle">Upload your clinical database files (CSV or Excel formats are supported).</p>
+                </div>
+
+                <div class="drop-zone" id="upload-drop-zone">
+                    <i data-lucide="upload-cloud" class="drop-icon"></i>
+                    <h3>Drag & Drop Raw Datasets Here</h3>
+                    <p>or click to browse your local filesystem</p>
+                    <input type="file" id="file-input" multiple accept=".csv,.xlsx,.xls" style="display: none;">
+                </div>
+
+                <div class="content-row">
+                    <div class="card flex-1">
+                        <div class="card-header">
+                            <h3>Uploaded Datasets</h3>
+                        </div>
+                        <div class="card-body">
+                            <div id="no-files-message" class="empty-state">
+                                <i data-lucide="file" class="empty-icon"></i>
+                                <p>No raw datasets uploaded yet.</p>
+                            </div>
+                            <ul class="dataset-list" id="dataset-list-container">
+                                <!-- Dynamically filled -->
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="card flex-2">
+                        <div class="card-header flex-header">
+                            <h3>Dataset Preview</h3>
+                            <span class="preview-title-sub" id="preview-dataset-name">Select a dataset to preview</span>
+                        </div>
+                        <div class="card-body table-container" id="preview-table-container">
+                            <div class="empty-state">
+                                <i data-lucide="eye" class="empty-icon"></i>
+                                <p>Select an uploaded file from the left panel to inspect its rows.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab: Spec Builder -->
+            <section id="spec-builder" class="tab-content">
+                <div class="header-section flex-header">
+                    <div>
+                        <h1>Mapping Spec Builder</h1>
+                        <p class="subtitle">Design the variables transformation maps between raw sources and SDTM standards.</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn btn-secondary" id="import-spec-btn">
+                            <i data-lucide="upload"></i> Load Spec JSON
+                        </button>
+                        <input type="file" id="spec-file-input" accept=".json" style="display: none;">
+                        <button class="btn btn-secondary" id="export-spec-btn">
+                            <i data-lucide="download"></i> Save Spec JSON
+                        </button>
+                    </div>
+                </div>
+
+                <div class="spec-workspace">
+                    <div class="spec-sidebar">
+                        <h3>SDTM Domains</h3>
+                        <div class="domain-selector" id="spec-domain-selector">
+                            <button class="domain-tab active" data-domain="DM">
+                                <span class="d-code">DM</span>
+                                <span class="d-name">Demographics</span>
+                            </button>
+                            <button class="domain-tab" data-domain="AE">
+                                <span class="d-code">AE</span>
+                                <span class="d-name">Adverse Events</span>
+                            </button>
+                            <button class="domain-tab" data-domain="VS">
+                                <span class="d-code">VS</span>
+                                <span class="d-name">Vital Signs</span>
+                            </button>
+                            <button class="domain-tab" data-domain="LB">
+                                <span class="d-code">LB</span>
+                                <span class="d-name">Laboratory Findings</span>
+                            </button>
+                            <button class="domain-tab" data-domain="MH">
+                                <span class="d-code">MH</span>
+                                <span class="d-name">Medical History</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="spec-editor card">
+                        <div class="card-header flex-header">
+                            <div>
+                                <h3 id="current-spec-domain-title">Demographics (DM) Mapping</h3>
+                                <p class="text-muted" style="font-size: 0.85rem; margin-top: 4px;">Map your raw variables to SDTM domain columns.</p>
+                            </div>
+                            <span class="badge badge-info" id="domain-variables-count">0 Variables</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="spec-table-wrapper">
+                                <table class="spec-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Target Variable</th>
+                                            <th>Core</th>
+                                            <th>Mapping Rule</th>
+                                            <th>Rule Configuration</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="spec-variables-tbody">
+                                        <!-- Dynamically generated rows -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab: Runner -->
+            <section id="runner" class="tab-content">
+                <div class="header-section">
+                    <h1>SDTM Transformation Engine</h1>
+                    <p class="subtitle">Run the rules compiler to generate the SDTM domains inside the browser.</p>
+                </div>
+
+                <div class="content-row">
+                    <div class="card flex-1">
+                        <div class="card-header">
+                            <h3>Execution Panel</h3>
+                        </div>
+                        <div class="card-body text-center" style="padding: 2rem 1rem;">
+                            <div class="engine-indicator idle" id="engine-status-indicator">
+                                <div class="pulse-ring"></div>
+                                <i data-lucide="play" class="engine-icon" id="engine-play-icon"></i>
+                            </div>
+                            <h3 style="margin-top: 1.5rem;" id="engine-status-text">Engine Ready</h3>
+                            <p class="text-muted" style="margin-top: 0.5rem; font-size: 0.9rem;">Runs standard and custom mapping rules across all configured domains.</p>
+                            
+                            <button class="btn btn-primary btn-lg btn-block" style="margin-top: 2rem;" id="run-mapping-btn">
+                                <i data-lucide="play"></i> Execute SDTM Mapping
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card flex-2">
+                        <div class="card-header flex-header">
+                            <h3>Console Log Output</h3>
+                            <button class="btn btn-xs btn-secondary" id="clear-console-btn">Clear</button>
+                        </div>
+                        <div class="card-body console-body" id="console-output">
+                            <div class="log-line system">[SYSTEM] Welcome to SDTM.oak Clinical Engine. Ready to run mappings...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 1.5rem;">
+                    <div class="card-header flex-header">
+                        <h3>Generated SDTM Tables</h3>
+                        <div class="tab-pill-container" id="generated-tables-tabs">
+                            <!-- Buttons populated dynamically -->
+                            <span class="text-muted" style="font-size: 0.9rem;">No data generated yet. Click 'Execute' above.</span>
+                        </div>
+                    </div>
+                    <div class="card-body table-container" id="generated-table-preview-container">
+                        <div class="empty-state">
+                            <i data-lucide="database-backup" class="empty-icon"></i>
+                            <p>Once you run the compiler, you can inspect the generated SDTM records here.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab: Validator -->
+            <section id="validator" class="tab-content">
+                <div class="header-section">
+                    <h1>CDISC Compliance Validator</h1>
+                    <p class="subtitle">Validates generated datasets against FDA, PMDA and Pinnacle 21 alignment guidelines.</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header flex-header">
+                        <h3>Validation Execution Summary</h3>
+                        <button class="btn btn-secondary" id="run-validator-btn">
+                            <i data-lucide="refresh-cw"></i> Re-Run Validation
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="validation-summary-grid">
+                            <div class="v-summary-card val-success">
+                                <span class="val-label">Validation Status</span>
+                                <span class="val-value" id="val-sum-status">N/A</span>
+                            </div>
+                            <div class="v-summary-card val-error">
+                                <span class="val-label">Errors</span>
+                                <span class="val-value" id="val-sum-errors">0</span>
+                            </div>
+                            <div class="v-summary-card val-warning">
+                                <span class="val-label">Warnings</span>
+                                <span class="val-value" id="val-sum-warnings">0</span>
+                            </div>
+                            <div class="v-summary-card val-info">
+                                <span class="val-label">Passed Checks</span>
+                                <span class="val-value" id="val-sum-passed">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 1.5rem;">
+                    <div class="card-header flex-header">
+                        <h3>Validation Rule Violations</h3>
+                        <div class="filter-controls">
+                            <select id="val-filter-domain" class="select-small">
+                                <option value="all">All Domains</option>
+                                <option value="DM">DM</option>
+                                <option value="AE">AE</option>
+                                <option value="VS">VS</option>
+                                <option value="LB">LB</option>
+                                <option value="MH">MH</option>
+                            </select>
+                            <select id="val-filter-severity" class="select-small">
+                                <option value="all">All Severities</option>
+                                <option value="Error">Errors Only</option>
+                                <option value="Warning">Warnings Only</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="card-body table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Severity</th>
+                                    <th>Domain</th>
+                                    <th>Variable</th>
+                                    <th>Check Code</th>
+                                    <th>Message Details</th>
+                                </tr>
+                            </thead>
+                            <tbody id="validation-report-tbody">
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted" style="padding: 3rem;">
+                                        No datasets have been mapped yet. Execute mapping rules first to review compliance reports.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab: Export Center -->
+            <section id="exporter" class="tab-content">
+                <div class="header-section">
+                    <h1>Export Center</h1>
+                    <p class="subtitle">Extract generated SDTM records and pipeline specifications for delivery and archiving.</p>
+                </div>
+
+                <div class="export-grid">
+                    <!-- Export Card: Web Output -->
+                    <div class="card">
+                        <div class="card-header">
+                            <i data-lucide="file-output" class="export-header-icon color-green"></i>
+                            <h3>Download SDTM CSVs</h3>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted" style="margin-bottom: 1.5rem; font-size: 0.9rem;">Download each mapped SDTM dataset separately in standard UTF-8 Comma-Separated Values format.</p>
+                            <div id="csv-export-list" class="export-list">
+                                <span class="text-muted" style="font-size: 0.9rem;">No generated datasets available. Run the mapping runner first.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Export Card: R Pipeline -->
+                    <div class="card">
+                        <div class="card-header">
+                            <i data-lucide="binary" class="export-header-icon color-blue"></i>
+                            <h3>R Pipeline Bundle</h3>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted" style="margin-bottom: 1.5rem; font-size: 0.9rem;">Download the full mapping spec JSON and a ready-to-run R script (`sdtm_processor.R`) that utilizes `haven` and `tidyverse` to compile `.xpt` files on your local machine.</p>
+                            
+                            <div class="pipeline-features" style="margin-bottom: 1.5rem;">
+                                <div class="p-feature-item">
+                                    <i data-lucide="check" class="color-green"></i>
+                                    <span>Natively outputs SAS V5 Transport (.xpt) datasets</span>
+                                </div>
+                                <div class="p-feature-item">
+                                    <i data-lucide="check" class="color-green"></i>
+                                    <span>Uses standard packages (dplyr, haven, jsonlite)</span>
+                                </div>
+                                <div class="p-feature-item">
+                                    <i data-lucide="check" class="color-green"></i>
+                                    <span>Fully matches the transformation rules designed in this UI</span>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-primary btn-block" id="download-r-bundle-btn">
+                                <i data-lucide="archive"></i> Download R Pipeline Bundle
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <!-- SheetJS for Excel uploads -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- PapaParse for CSV uploads -->
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    <!-- App Logic -->
+    <script src="app.js"></script>
+</body>
+</html>

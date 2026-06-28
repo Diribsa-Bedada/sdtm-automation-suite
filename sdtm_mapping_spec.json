@@ -1,0 +1,50 @@
+{
+  "DM": {
+    "STUDYID": { "type": "constant", "value": "MYSTUDY-01" },
+    "DOMAIN": { "type": "constant", "value": "DM" },
+    "USUBJID": { "type": "field", "dataset": "demo_raw.csv", "field": "SubjectID" },
+    "SUBJID": { "type": "field", "dataset": "demo_raw.csv", "field": "SubjectID" },
+    "RFSTDTC": { "type": "iso_date", "dataset": "demo_raw.csv", "field": "EnrollDate" },
+    "RFENDTC": { "type": "iso_date", "dataset": "demo_raw.csv", "field": "EnrollDate" },
+    "SITEID": { "type": "field", "dataset": "demo_raw.csv", "field": "Site" },
+    "BRTHDTC": { "type": "iso_date", "dataset": "demo_raw.csv", "field": "BirthDate" },
+    "AGE": { "type": "custom", "dataset": "demo_raw.csv", "calculation": "Calculate Age" },
+    "AGEU": { "type": "constant", "value": "YEARS" },
+    "SEX": {
+      "type": "lookup",
+      "dataset": "demo_raw.csv",
+      "field": "Gender",
+      "lookup": { "Male": "M", "Female": "F", "M": "M", "F": "F" }
+    },
+    "RACE": { "type": "field", "dataset": "demo_raw.csv", "field": "Race" },
+    "ARMCD": {
+      "type": "lookup",
+      "dataset": "demo_raw.csv",
+      "field": "TxGroup",
+      "lookup": { "Active": "ACT", "Placebo": "PBO" }
+    },
+    "ARM": { "type": "field", "dataset": "demo_raw.csv", "field": "TxGroup" },
+    "COUNTRY": { "type": "field", "dataset": "demo_raw.csv", "field": "Country" }
+  },
+  "AE": {
+    "STUDYID": { "type": "constant", "value": "MYSTUDY-01" },
+    "DOMAIN": { "type": "constant", "value": "AE" },
+    "USUBJID": { "type": "field", "dataset": "ae_raw.csv", "field": "SubjNum" },
+    "AESEQ": { "type": "sequence" },
+    "AETERM": { "type": "field", "dataset": "ae_raw.csv", "field": "Event" },
+    "AEDECOD": { "type": "field", "dataset": "ae_raw.csv", "field": "Event" },
+    "AESTDTC": { "type": "iso_date", "dataset": "ae_raw.csv", "field": "StartDate" },
+    "AEENDTC": { "type": "iso_date", "dataset": "ae_raw.csv", "field": "EndDate" },
+    "AESEV": { "type": "field", "dataset": "ae_raw.csv", "field": "Severity" },
+    "AESER": { "type": "field", "dataset": "ae_raw.csv", "field": "Serious" },
+    "AEACN": { "type": "field", "dataset": "ae_raw.csv", "field": "Action" },
+    "AEREL": { "type": "field", "dataset": "ae_raw.csv", "field": "Relationship" }
+  },
+  "VS": {
+    "STUDYID": { "type": "constant", "value": "MYSTUDY-01" },
+    "DOMAIN": { "type": "constant", "value": "VS" },
+    "USUBJID": { "type": "field", "dataset": "vs_raw.csv", "field": "SubjectCode" },
+    "VSSEQ": { "type": "sequence" },
+    "VSDTC": { "type": "iso_date", "dataset": "vs_raw.csv", "field": "Date" }
+  }
+}

@@ -1,0 +1,7 @@
+SubjectID,EnrollDate,Gender,Race,BirthDate,Country,Site,TxGroup
+SUBJ-001,12-Oct-2025,Male,Caucasian,1985-04-20,USA,SITE-01,Active
+SUBJ-002,15/10/2025,Female,Black or African American,1990-08-15,USA,SITE-01,Placebo
+SUBJ-003,2025-11-01,M,Asian,1978-12-05,CAN,SITE-02,Active
+SUBJ-004,2025/11/05,F,Caucasian,1965-02-14,USA,SITE-02,Placebo
+SUBJ-005,10-Nov-2025,Female,Hispanic,1992-06-30,DEU,SITE-03,Active
+SUBJ-006,,Male,Caucasian,1980-07-22,USA,SITE-01,Active

@@ -1,0 +1,52 @@
+# ==============================================================
+# SDTM Automation Suite — .gitignore
+# ==============================================================
+# 🚨 SECURITY: Never commit API keys, .env files, or patient data
+
+# Environment & Secrets
+.env
+.env.local
+.env.production
+*.key
+*.pem
+
+# Output datasets (may contain PHI/PII)
+output/
+*.xpt
+
+# R artifacts
+.Rhistory
+.RData
+.Rproj.user/
+*.Rproj
+
+# Python artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Node (if npm packages are ever added)
+node_modules/
+
+# Clinical audit logs (may contain patient identifiers)
+clinical_audit_report.txt
+
+# Temporary files
+*.tmp
+*.bak
+scratch/
