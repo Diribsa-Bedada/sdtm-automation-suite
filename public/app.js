@@ -1,40 +1,4 @@
-// ==============================================================================
-// SDTM Automation Suite — Client-Side Mapping Engine
-// ==============================================================================
-//
-// This file implements the browser-based clinical data transformation pipeline
-// for the SDTM.oak Agentic Compiler. It serves as the "Visual Web Workspace"
-// interface, allowing users to interactively:
-//
-//   1. Upload raw clinical CSV/Excel datasets (Data Manager)
-//   2. Configure variable-level mapping specifications (Spec Builder)
-//   3. Execute SDTM transformations entirely client-side (Mapping Runner)
-//   4. Validate outputs against CDISC IG 3.2 rules (Validator)
-//   5. Export mapped datasets as CSVs or self-contained R scripts (Export Center)
-//
-// Architecture Notes:
-//   - All transformations run IN-BROWSER using JavaScript (no server required)
-//   - State is persisted to localStorage for session continuity
-//   - The mapping spec format is identical to the one used by the R agent
-//     pipeline (sdtm_agent.R) and MCP server (mcp_server.py)
-//   - Wide-to-long transposition for VS domain mirrors the R `pivot_longer` logic
-//   - Mock datasets are embedded inline for instant demo capability
-//
-// Key Design Decision:
-//   The client-side engine mirrors the R pipeline's logic exactly, so users can
-//   prototype mappings visually, then download the R script for production use.
-//
-// Dependencies (loaded via CDN in index.html):
-//   - PapaParse: CSV parsing
-//   - SheetJS (XLSX): Excel file reading
-//   - Lucide: Icon library
-//
-// Course Concepts Demonstrated:
-//   - Vibe Coding (intent-driven development with dual interfaces)
-//   - Multi-agent evaluation pattern (Auditor validates, flags errors)
-//   - Task decomposition (schema read → spec → transform → validate → export)
-//
-// ==============================================================================
+// SDTM Automation Suite App Logic
 
 // Global Application State
 const state = {
@@ -113,6 +77,21 @@ const state = {
             { var: 'MHDECOD', label: 'Dictionary-Derived Term', core: 'Req', type: 'Char', defaultRule: { type: 'field', dataset: '', field: '' } },
             { var: 'MHCAT', label: 'Category for Medical History', core: 'Perm', type: 'Char', defaultRule: { type: 'constant', value: 'GENERAL' } },
             { var: 'MHSTDTC', label: 'Start Date/Time of Medical History Event', core: 'Perm', type: 'Char', defaultRule: { type: 'field', dataset: '', field: '' } }
+        ],
+        CM: [
+            { var: 'STUDYID', label: 'Study Identifier', core: 'Req', type: 'Char', defaultRule: { type: 'constant', value: 'MYSTUDY-01' } },
+            { var: 'DOMAIN', label: 'Domain Abbreviation', core: 'Req', type: 'Char', defaultRule: { type: 'constant', value: 'CM' } },
+            { var: 'USUBJID', label: 'Unique Subject Identifier', core: 'Req', type: 'Char', defaultRule: { type: 'field', dataset: 'cm_raw.csv', field: 'SubjectID' } },
+            { var: 'CMSEQ', label: 'Sequence Number', core: 'Req', type: 'Num', defaultRule: { type: 'sequence' } },
+            { var: 'CMTRT', label: 'Reported Name of Drug, Med, or Therapy', core: 'Req', type: 'Char', defaultRule: { type: 'field', dataset: 'cm_raw.csv', field: 'MedName' } },
+            { var: 'CMDECOD', label: 'Standardized Medication Name', core: 'Exp', type: 'Char', defaultRule: { type: 'field', dataset: 'cm_raw.csv', field: 'MedName' } },
+            { var: 'CMINDC', label: 'Indication', core: 'Perm', type: 'Char', defaultRule: { type: 'field', dataset: 'cm_raw.csv', field: 'Indication' } },
+            { var: 'CMROUTE', label: 'Route of Administration', core: 'Perm', type: 'Char', defaultRule: { type: 'lookup', dataset: 'cm_raw.csv', field: 'Route', lookup: { 'Oral': 'ORAL', 'ORAL': 'ORAL', 'IV': 'INTRAVENOUS', 'Inhalation': 'INHALATION' } } },
+            { var: 'CMDOSE', label: 'Dose per Administration', core: 'Perm', type: 'Num', defaultRule: { type: 'field', dataset: 'cm_raw.csv', field: 'Dose' } },
+            { var: 'CMDOSU', label: 'Dose Units', core: 'Perm', type: 'Char', defaultRule: { type: 'field', dataset: 'cm_raw.csv', field: 'DoseUnit' } },
+            { var: 'CMFRQ', label: 'Frequency of Administration', core: 'Perm', type: 'Char', defaultRule: { type: 'field', dataset: 'cm_raw.csv', field: 'Frequency' } },
+            { var: 'CMSTDTC', label: 'Start Date/Time of Medication', core: 'Exp', type: 'Char', defaultRule: { type: 'iso_date', dataset: 'cm_raw.csv', field: 'StartDate' } },
+            { var: 'CMENDTC', label: 'End Date/Time of Medication', core: 'Perm', type: 'Char', defaultRule: { type: 'iso_date', dataset: 'cm_raw.csv', field: 'EndDate' } }
         ]
     }
 };
@@ -142,7 +121,21 @@ SUBJ-002,Baseline,15/10/2025,130,85,abc,37.0,68.1
 SUBJ-002,Week 2,29/10/2025,128,84,70,36.8,67.9
 SUBJ-003,Baseline,2025-11-01,118,78,68,36.4,82.0
 SUBJ-004,Baseline,2025-11-05,145,92,80,36.9,91.3
-SUBJ-005,Baseline,10-Nov-2025,115,75,64,36.2,59.8`
+SUBJ-005,Baseline,10-Nov-2025,115,75,64,36.2,59.8`,
+
+    'cm_raw.csv': `SubjectID,MedName,Indication,Route,Dose,DoseUnit,Frequency,StartDate,EndDate,Ongoing
+SUBJ-001,Acetaminophen,Headache,Oral,500,mg,As Needed,2025-10-15,2025-10-17,No
+SUBJ-001,Lisinopril,Hypertension,Oral,10,mg,Once Daily,2020-03-01,,Yes
+SUBJ-002,Metformin,Type 2 Diabetes,Oral,1000,mg,Twice Daily,2019-06-15,,Yes
+SUBJ-002,Ondansetron,Nausea,IV,4,mg,As Needed,18/10/2025,19/10/2025,No
+SUBJ-003,Atorvastatin,Hyperlipidemia,Oral,20,mg,Once Daily,2021-01-10,,Yes
+SUBJ-003,Ibuprofen,Back Pain,ORAL,400,mg,Three Times Daily,01-Nov-2025,10-Nov-2025,No
+SUBJ-004,Omeprazole,GERD,Oral,20,mg,Once Daily,2022-08-20,,Yes
+SUBJ-004,Albuterol,Asthma,Inhalation,90,mcg,As Needed,2023-05-12,,Yes
+SUBJ-005,Warfarin,DVT Prophylaxis,Oral,5,mg,Once Daily,2024-02-01,,Yes
+SUBJ-005,Amoxicillin,Upper Respiratory Infection,Oral,500,mg,three times daily,15/11/2025,22/11/2025,No
+SUBJ-006,Sertraline,Depression,Oral,50,mg,Once Daily,2023-09-01,,Yes
+SUBJ-099,Aspirin,Pain,Oral,325,mg,As Needed,2025-11-05,2025-11-06,No`
 };
 
 // Initialize Application
@@ -762,6 +755,7 @@ function executeMappingProcess() {
             // We can add empty/stub tables for LB and MH if they are not configured
             processRowByRowGeneric('LB');
             processRowByRowGeneric('MH');
+            processRowByRowGeneric('CM');
 
             writeLog('Compilation completed successfully!', 'success');
             
@@ -1713,7 +1707,7 @@ function updateUI() {
     document.getElementById('dash-raw-count').textContent = fileCount;
     
     const mappedCount = Object.keys(state.generatedData).length;
-    document.getElementById('dash-mapped-count').textContent = `${mappedCount} / 5`;
+    document.getElementById('dash-mapped-count').textContent = `${mappedCount} / 6`;
     
     // 2. Render dataset panels
     renderDatasetList();

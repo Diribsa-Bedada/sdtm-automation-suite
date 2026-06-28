@@ -1,19 +1,9 @@
 <!DOCTYPE html>
-<!-- ============================================================
-     SDTM.oak Clinical Data Studio — Visual Web Workspace
-     ============================================================
-     Part of the SDTM Automation Suite capstone project.
-     This file provides the single-page application shell with 6 tabs:
-       Dashboard | Data Manager | Spec Builder | Runner | Validator | Export
-
-     Course Concept: Vibe Coding (intent-driven dual-interface development)
-     ============================================================ -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SDTM.oak — Agentic Clinical Data Compiler</title>
-    <meta name="description" content="An autonomous multi-agent system that transforms raw clinical trial data into FDA/PMDA submission-ready CDISC SDTM datasets using Google Gemini AI.">
+    <title>SDTM Automation Suite - Clinical Workspace</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -95,7 +85,7 @@
                         <div class="metric-icon bg-green"><i data-lucide="check-square"></i></div>
                         <div class="metric-info">
                             <span class="metric-label">Mapped Domains</span>
-                            <span class="metric-value" id="dash-mapped-count">0 / 5</span>
+                            <span class="metric-value" id="dash-mapped-count">0 / 6</span>
                         </div>
                     </div>
                     <div class="metric-card">
@@ -170,6 +160,16 @@
                                     </div>
                                     <div class="progress-bar-container">
                                         <div class="progress-bar" id="prog-bar-MH" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                                <div class="domain-progress-item">
+                                    <div class="domain-info">
+                                        <span class="domain-code">CM</span>
+                                        <span class="domain-name">Concomitant Medications</span>
+                                        <span class="domain-percent" id="prog-pct-CM">0%</span>
+                                    </div>
+                                    <div class="progress-bar-container">
+                                        <div class="progress-bar" id="prog-bar-CM" style="width: 0%"></div>
                                     </div>
                                 </div>
                             </div>
@@ -284,6 +284,10 @@
                             <button class="domain-tab" data-domain="MH">
                                 <span class="d-code">MH</span>
                                 <span class="d-name">Medical History</span>
+                            </button>
+                            <button class="domain-tab" data-domain="CM">
+                                <span class="d-code">CM</span>
+                                <span class="d-name">Concomitant Medications</span>
                             </button>
                         </div>
                     </div>
@@ -418,6 +422,7 @@
                                 <option value="VS">VS</option>
                                 <option value="LB">LB</option>
                                 <option value="MH">MH</option>
+                                <option value="CM">CM</option>
                             </select>
                             <select id="val-filter-severity" class="select-small">
                                 <option value="all">All Severities</option>
